@@ -14,10 +14,10 @@ bot.hear(['weather in (.*)', '(.*) weather'], 'direct_message,direct_mention,men
         var options = {
             protocol : 'http:',
             host : 'api.openweathermap.org',
-            path : '/data/2.5/weather?q='+city+'&appid=<05edc4cddb0ece1e50b64ad8bfa42218>',
+            path : '/data/2.5/weather?q='+city+'&appid=05edc4cddb0ece1e50b64ad8bfa42218',
             port : 80,
             method : 'GET'
-          }
+          };
  
         var request = http.request(options, function(response){
             var body = "";
@@ -37,10 +37,6 @@ bot.hear(['weather in (.*)', '(.*) weather'], 'direct_message,direct_mention,men
                         case "Clouds":
                         case "Cloud":
                                 reaction = "cloud";
-                                bot.reply(message,":"+reaction+":");
-                                break;
-                        case "Smoke":
-                                reaction = "smoking";
                                 bot.reply(message,":"+reaction+":");
                                 break;
                         case "Rain":
