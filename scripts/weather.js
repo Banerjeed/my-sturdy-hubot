@@ -1,7 +1,5 @@
 
 
-
-
 module.exports = function(bot) {
 bot.hear(['weather in (.*)', '(.*) weather'], 'direct_message,direct_mention,mention', function(bot,message) {
     var city = message.match[1];
@@ -66,7 +64,7 @@ bot.hear(['weather in (.*)', '(.*) weather'], 'direct_message,direct_mention,men
 }); 
           request.on('error', function(e) {
             console.log('Problem with request: ' + e.message);
-            bot.reply(message, "sorry, couldn't find weather info for city " + city);
+            bot.reply(message, "sorry, couldn't find weather info for this city " + city);
           });
           request.end();
   }
