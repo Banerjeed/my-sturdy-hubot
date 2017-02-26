@@ -1,41 +1,43 @@
+const http = require('http');
 module.exports = function(bot) {
 
-function doSomething(data) {
-    weather = JSON.parse(data);
-    console.log("weather :" + weather);
-    bot.reply(message, "It's " + weather + " in " + city);
+function weatherReport(data) {
+    bot.send(data);
 }
 
-bot.hear(/weather (.*)/i,function(message) {
-    var APIKEY = '05edc4cddb0ece1e50b64ad8bfa42218';
-
-    // instantiate http request
-    var request = new XMLHttpRequest();
-
-    // open request and define paramaters for request
-    request.open('GET', 'https://api.openweathermap.org/data/2.5/weather?q='+city+'&appid='+APIKEY, true);
-    
-    // define event handler for async return
-    request.onload = function(event) {
-
-        // do something on successful http response
-        if (request.status === 200) {
-            doSomething(request.statusText);
-        }
-
-        // if the server responds with redirect (300), error (400), server problem (500)
-        else {
-            bot.send("Error: Something is WRONG: " + event);
-        }
+bot.hear(/weather in (.*)/, function(data) {
+    console.log('query: ' + data.message);
+    var city = encodeURIComponent(data.match[1]);
+    var options = {
+        protocol : 'http:',
+        host : 'api.openweathermap.org',
+        path : '/data/2.5/weather?q='+city+'&appid=05edc4cddb0ece1e50b64ad8bfa42218',
+        method : 'GET'
     }
+    http.get(options, (resp) => {
+        const statusCode = resp.statusCode;
+        
+        let error;
+        // error handling
 
-    // define this event handler if you want to handle client-side request errors (ex: no internet connection)
-    request.onerror = function(event) {}
+        let rawData = '';
+        resp.on('data', (chunk) => rawData += chunk);
+        resp.on('end', () => {
+            try {
+                let parsedData = JSON.parse(rawData);
+                console.log(parsedData);
+                weatherReport(parsedData);
+            } catch (e) {
+                console.log(e.message);
+            }
+        });
 
-    // define this event if you want to handle request timeouts
-    request.ontimeout = function(event) {}
-    request.send();
+    }).on('error', (e) => {
+        console.log('Problem with request: ' + e.message);
+        bot.reply(message, "sorry, couldn't find weather info for this city " + city);
+    });
 });
+
 };
     //If error, display error to user
     //Otherwise, display the weather
