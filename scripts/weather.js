@@ -13,7 +13,7 @@ bot.hear(/weather in (.*)/, function(data) {
         host : 'api.openweathermap.org',
         path : '/data/2.5/weather?q='+city+'&appid=05edc4cddb0ece1e50b64ad8bfa42218',
         method : 'GET'
-    }
+    };
     http.get(options, (resp) => {
         const statusCode = resp.statusCode;
         
@@ -27,7 +27,35 @@ bot.hear(/weather in (.*)/, function(data) {
                 let parsedData = JSON.parse(rawData);
                 console.log(parsedData);
                 weatherReport(parsedData);
-            } catch (e) {
+                console.log("Its " + (parsedData.weather[0].main) + " in " + decodeURIComponent(city));
+                var message = bot.send("Its " + (parsedData.weather[0].main) + " in " + decodeURIComponent(city));
+                var emoji = require('node-emoji');
+                switch(parsedData.weather[0].main){
+                        case "Clear":
+                                bot.send(message, + " " +emoji.get('sunny') + " " +emoji.get('sunglasses'));
+                                bot.send(message,"Its good idea to wear sunglasses before going out");
+                                break;
+                        case "Clouds":
+                        case "Cloud":
+                                bot.send(message, + " " +emoji.get('cloud') + " " +emoji.get('expressionless'));
+                                break;
+                        case "Rain":
+                                bot.send(message, + " " +emoji.get('rain_cloud') + " " +emoji.get('umbrella'));
+                                bot.send(message,"Grab an umbrella if you are in " + decodeURIComponent(city));
+                                break;
+                        case "Thunderstorm":
+                                bot.send(message, + " " +emoji.get('lightning') + " " +emoji.get('fearful'));
+                                bot.send(message,"Be careful if you are in " + decodeURIComponent(city));
+                                break;
+                        case "Fog":
+                        case "Foggy":
+                        case "Haze":
+                                bot.send(message, + " " +emoji.get('fog') + " " +emoji.get('sun_behind_cloud'));
+                                break;
+        
+                    }
+            }
+            catch (e) {
                 console.log(e.message);
             }
         });
@@ -39,56 +67,4 @@ bot.hear(/weather in (.*)/, function(data) {
 });
 
 };
-    //If error, display error to user
-    //Otherwise, display the weather
-/*
-        response.on('data', function(data) {
-                body += data;
-                weather = JSON.parse(body);
-                console.log("weather :" + weather.weather[0].main);
-                bot.reply(message, "Its " + weather.weather[0].main + " in " + city);
-                var reaction = "";
-                switch(weather.weather[0].main){
-                        case "Clear":
-                                reaction = "mostly_sunny";
-                                bot.reply(message,":"+reaction+":");
-                                bot.reply(message,"Its good idea to wear sunglasses before going out");
-                                break;
-                        case "Clouds":
-                        case "Cloud":
-                                reaction = "cloud";
-                                bot.reply(message,":"+reaction+":");
-                                break;
-                        case "Rain":
-                                reaction = "rain_cloud";
-                                bot.reply(message,":"+reaction+":");
-                                bot.reply(message,"Please carry umbrella if you are in " + city);
-                                break;
-                        case "Thunderstorm":
-                                reaction = "thunder_cloud_and_rain";
-                                bot.reply(message,":"+reaction+":");
-                                bot.reply(message,"Please don't go out if you are in " + city);
-                                break;
-                }
-                bot.api.reactions.add({
-                    timestamp: message.ts,
-                    channel: message.channel,
-                    name: reaction,
-                }, function(err, res) {
-                    if (err) {
-                        bot.botkit.log('Failed to add emoji reaction :(', err);
-                    }
-                });
-            });
-            response.on('end', function() {
-              
-            });
-        }); 
-          request.on('error', function(e) {
-            console.log('Problem with request: ' + e.message);
-            bot.reply(message, "sorry, couldn't find weather info for this city " + city);
-          });
-          request.end();
-    }
-    });
-    */
+    
