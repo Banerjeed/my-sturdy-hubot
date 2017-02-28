@@ -27,13 +27,13 @@ bot.hear(/weather in (.*)/, function(data) {
                 let parsedData = JSON.parse(rawData);
                 console.log(parsedData);
                 weatherReport(parsedData);
-                console.log("Its " + (parsedData.weather[0].main) + " in " + decodeURIComponent(city));
-                var message = bot.send("Its " + (parsedData.weather[0].main) + " in " + decodeURIComponent(city));
+                console.log("It's " + (parsedData.weather[0].main) + " in " + decodeURIComponent(city));
+                var message = bot.send("It's " + (parsedData.weather[0].main) + " in " + decodeURIComponent(city));
                 var emoji = require('node-emoji');
                 switch(parsedData.weather[0].main){
                         case "Clear":
                                 bot.send(message, + " " +emoji.get('sunny') + " " +emoji.get('sunglasses'));
-                                bot.send(message,"Its good idea to wear sunglasses before going out");
+                                bot.send(message,"It's good idea to wear sunglasses before going out");
                                 break;
                         case "Clouds":
                         case "Cloud":
